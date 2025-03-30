@@ -68,9 +68,6 @@ def draw_grid(screen, tile_rules, agent_pos, car_image):
                                              (end[0], end[1] + head_size)])
 
     x, y = agent_pos
-    # center = (x * TILE_SIZE + TILE_SIZE // 2, y * TILE_SIZE + TILE_SIZE // 2)
-    # pygame.draw.circle(screen, COLORS["agent"], center, TILE_SIZE // 3)
-
     car_rect = car_image.get_rect(center=(x * TILE_SIZE + TILE_SIZE // 2, y * TILE_SIZE + TILE_SIZE // 2))
     screen.blit(car_image, car_rect)
 
