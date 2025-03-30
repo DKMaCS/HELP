@@ -50,13 +50,13 @@ class DrivingEnv(gym.Env):
 
         return self.position, reward, done, info
 
-    def render(self, mode="human"):
-        grid = np.full((self.height, self.width), ".")
-        x, y = self.position
-        grid[y][x] = "P"
-        for row in grid:
-            print(" ".join(row))
-        print()
+    # def render(self, mode="human"):
+    #     grid = np.full((self.height, self.width), ".")
+    #     x, y = self.position
+    #     grid[y][x] = "P"
+    #     for row in grid:
+    #         print(" ".join(row))
+    #     print()
 
     @staticmethod
     def _direction_name(action):
