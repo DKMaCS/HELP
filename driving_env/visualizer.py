@@ -85,7 +85,7 @@ def run_visualizer(tile_rules, env):
 
     font = pygame.font.SysFont(None, 24)
 
-    current_warning = ""  # <-- Store warning across frames
+    current_warning = ""
 
     while running:
         screen.fill(COLORS["bg"])

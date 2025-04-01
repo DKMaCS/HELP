@@ -39,7 +39,7 @@ def get_rules():
     set_tile(1, 4, ["up", "down"])
     set_tile(1, 3, ["up", "down"])
     set_tile(1, 2, ["up", "down"])
-    set_tile(1, 1, ["down", "right"]) # dummy goal for time being
+    set_tile(1, 1, ["down", "right"])
 
     # Bottom row right of center column
     set_tile(7, 5, ["right"], warn="Orange lot full")
