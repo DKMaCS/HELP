@@ -10,14 +10,16 @@ def main():
         choice = input("Which environment? (a/b): ").strip().lower()
         if choice == "a":
             rules = get_rules_a()
+            env = DrivingEnv(tile_rules=rules, width=13, height=9, start_position=(6, 8))
             break
         elif choice == "b":
             rules = get_rules_b()
+            env = DrivingEnv(tile_rules=rules, width=13, height=9, start_position=(6, 7))
             break
         else:
             print("Invalid choice. Please enter 'a' or 'b'.")
 
-    env = DrivingEnv(tile_rules=rules, width=13, height=9, start_position=(6,8))
+
     obs = env.reset()
     action_log, goal_reached = run_visualizer(rules, env)
 

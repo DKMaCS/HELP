@@ -27,7 +27,7 @@ def draw_grid(screen, tile_rules, agent_pos, car_image):
             rule = tile_rules.get((x, y), {})
             color = COLORS["bg"]
             if rule.get("goal"):
-                color = COLORS["goal"]
+                color = rule.get("color", COLORS["goal"])
             elif (x, y) in tile_rules:
                 color = COLORS["path"]
 
@@ -72,7 +72,6 @@ def draw_grid(screen, tile_rules, agent_pos, car_image):
     screen.blit(car_image, car_rect)
 
 def run_visualizer(tile_rules, env):
-
     visualizer_log = []
     pygame.init()
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
@@ -84,19 +83,26 @@ def run_visualizer(tile_rules, env):
     running = True
     goal_reached = False
 
-    font = pygame.font.SysFont(None, 24)  # Initialize font
+    font = pygame.font.SysFont(None, 24)
+
+    current_warning = ""  # <-- Store warning across frames
 
     while running:
         screen.fill(COLORS["bg"])
         draw_grid(screen, tile_rules, env.position, car_image)
 
-        # Get prompt and render if present
+        # Draw warning if any
+        if current_warning:
+            warning_surface = font.render(f"{current_warning}", True, (255, 0, 0))
+            screen.blit(warning_surface, (10, SCREEN_HEIGHT - 30))
+
+        # Draw prompt if any
         x, y = env.position
         tile_data = tile_rules.get((x, y), {})
         prompt = tile_data.get("prompt", "")
         if prompt:
-            text_surface = font.render(prompt, True, (0, 0, 0))
-            screen.blit(text_surface, (10, SCREEN_HEIGHT - 30))
+            prompt_surface = font.render(prompt, True, (0, 0, 0))
+            screen.blit(prompt_surface, (10, SCREEN_HEIGHT - 30))
 
         pygame.display.flip()
 
@@ -109,15 +115,19 @@ def run_visualizer(tile_rules, env):
 
         if keys[pygame.K_UP]:
             obs, reward, done, info = env.step(0)
+            current_warning = info.get("warn", "")
             visualizer_log.append([time.time(), obs[0], obs[1], 'up', reward, str(info)])
         elif keys[pygame.K_DOWN]:
             obs, reward, done, info = env.step(1)
+            current_warning = info.get("warn", "")
             visualizer_log.append([time.time(), obs[0], obs[1], 'down', reward, str(info)])
         elif keys[pygame.K_LEFT]:
             obs, reward, done, info = env.step(2)
+            current_warning = info.get("warn", "")
             visualizer_log.append([time.time(), obs[0], obs[1], 'left', reward, str(info)])
         elif keys[pygame.K_RIGHT]:
             obs, reward, done, info = env.step(3)
+            current_warning = info.get("warn", "")
             visualizer_log.append([time.time(), obs[0], obs[1], 'right', reward, str(info)])
 
         if done:
@@ -128,6 +138,7 @@ def run_visualizer(tile_rules, env):
 
     pygame.quit()
     return visualizer_log, goal_reached
+
 
 def draw_arrow(surface, x, y, direction, color=(0, 0, 0)):
     cx = x * TILE_SIZE + TILE_SIZE // 2

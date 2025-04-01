@@ -22,24 +22,30 @@ class DrivingEnv(gym.Env):
     def step(self, action):
         x, y = self.position
         blocked = self.tile_rules.get((x, y), {}).get("block", [])
+
+        # Check if movement is blocked from current tile
         if self._direction_name(action) in blocked:
             return self.position, -1, False, {"blocked": True}
 
-        # Apply movement if not blocked
+        # Predict new position
+        new_x, new_y = x, y
         if action == 0 and y > 0:
-            y -= 1  # Up
+            new_y -= 1  # Up
         elif action == 1 and y < self.height - 1:
-            y += 1  # Down
+            new_y += 1  # Down
         elif action == 2 and x > 0:
-            x -= 1  # Left
+            new_x -= 1  # Left
         elif action == 3 and x < self.width - 1:
-            x += 1  # Right
+            new_x += 1  # Right
 
-        self.position = np.array([x, y])
+        # Check for warning on next tile
+        tile_data = self.tile_rules.get((new_x, new_y), {})
+        if "warn" in tile_data:
+            return self.position, 0, False, {"warn": tile_data["warn"]}
 
-        # Prepare info dictionary
+        # Move player
+        self.position = np.array([new_x, new_y])
         info = {}
-        tile_data = self.tile_rules.get((x, y), {})
 
         if "prompt" in tile_data:
             info["prompt"] = tile_data["prompt"]
